@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <settings>
+        <setting name="logImpl" value="LOG4J"/>
+    </settings>
+
+    <typeAliases>
+        <package name="com.tang.pojo"/>
+    </typeAliases>
+
+    <plugins>
+        <plugin interceptor="com.github.pagehelper.PageInterceptor">
+            <!-- reasonable：分页合理化参数，默认为false
+                 值为true时，pageNum <= 0时会查询第一页，
+                 pageNum > pages超过上限会查询最后一页，
+                 默认值为false时，根据参数进行查询-->
+            <property name="reasonable" value="true"/>
+        </plugin>
+    </plugins>
+
+    <mappers>
+        <mapper resource="com/tang/dao/EmployeeMapper.xml"/>
+        <mapper resource="com/tang/dao/MenuMapper.xml"/>
+        <mapper resource="com/tang/dao/DeptMapper.xml"/>
+        <mapper resource="com/tang/dao/RoleMapper.xml"/>
+        <mapper resource="com/tang/dao/FloorMapper.xml"/>
+        <mapper resource="com/tang/dao/RoomTypeMapper.xml"/>
+        <mapper resource="com/tang/dao/RoomMapper.xml"/>
+        <mapper resource="com/tang/dao/OrdersMapper.xml"/>
+        <mapper resource="com/tang/dao/CheckInMapper.xml"/>
+        <mapper resource="com/tang/dao/CheckOutMapper.xml"/>
+    </mappers>
+
+</configuration>

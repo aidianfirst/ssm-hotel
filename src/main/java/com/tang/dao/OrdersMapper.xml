@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tang.dao.OrdersMapper">
+    <resultMap id="BaseResultMap" type="Orders">
+        <id property="id" column="id"/>
+        <result property="ordersNo" column="ordersNo"/>
+        <result property="accountId" column="accountId"/>
+        <result property="roomTypeId" column="roomTypeId"/>
+        <result property="roomId" column="roomId"/>
+        <result property="reservationName" column="reservationName"/>
+        <result property="idCard" column="idCard"/>
+        <result property="phone" column="phone"/>
+        <result property="status" column="status"/>
+        <result property="reserveDate" column="reserveDate"/>
+        <result property="arriveDate" column="arriveDate"/>
+        <result property="leaveDate" column="leaveDate"/>
+        <result property="reservePrice" column="reservePrice"/>
+        <result property="remark" column="remark"/>
+    </resultMap>
+    
+    <resultMap id="ordersRoomAndTypeResultMap" type="Orders" extends="BaseResultMap">
+        <association property="room" javaType="Room">
+            <id property="id" column="id"/>
+            <result property="roomNum" column="roomNum"/>
+        </association>
+        <association property="roomType" javaType="RoomType">
+            <id property="id" column="id"/>
+            <result property="typeName" column="typeName"/>
+        </association>
+    </resultMap>
+
+
+
+    <insert id="addOrders">
+        insert into t_orders (ordersNo,accountId,roomTypeId,roomId,reservationName,idCard,phone,status,reserveDate,arriveDate,leaveDate,reservePrice,remark)
+        values (#{ordersNo},#{accountId},#{roomTypeId},#{roomId},#{reservationName},#{idCard},#{phone},#{status},#{reserveDate},#{arriveDate},#{leaveDate},#{reservePrice},#{remark})
+    </insert>
+
+    <select id="findOrdersList"  resultMap="ordersRoomAndTypeResultMap">
+        select t1.*,t2.`roomNum`,t3.`typeName` from t_orders t1
+        inner join t_room t2 on t1.roomId = t2.id
+        inner join t_room_type t3 on t1.roomTypeId = t3.id
+        <where>
+            <if test="reservationName!=null and reservationName!=''">
+                and t1.reservationName like concat('%',#{reservationName},'%')
+            </if>
+            <if test="idCard!=null and idCard!=''">
+                and t1.idCard like concat('%',#{idCard},'%')
+            </if>
+            <if test="phone!=null and phone!=''">
+                and t1.phone like concat('%',#{phone},'%')
+            </if>
+            <if test="roomTypeId!=null">
+                and t1.roomTypeId = #{roomTypeId}
+            </if>
+            <if test="status!=null">
+                and t1.status = #{status}
+            </if>
+            <if test="startDate!=null">
+                <![CDATA[and t1.reserveDate >= #{startDate}]]>
+            </if>
+            <if test="endDate!=null">
+                <![CDATA[and t1.reserveDate <= #{endDate}]]>
+            </if>
+        </where>
+    </select>
+
+    <update id="updateOrders">
+        update t_orders
+        <set>
+            <if test="ordersNo != null">
+                ordersNo = #{ordersNo},
+            </if>
+            <if test="accountId != null">
+                accountId = #{accountId},
+            </if>
+            <if test="roomTypeId != null">
+                roomTypeId = #{roomTypeId},
+            </if>
+            <if test="roomId != null">
+                roomId = #{roomId},
+            </if>
+            <if test="reservationName != null">
+                reservationName = #{reservationName},
+            </if>
+            <if test="idCard != null">
+                idCard = #{idCard},
+            </if>
+            <if test="phone != null">
+                phone = #{phone},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="reserveDate != null">
+                reserveDate = #{reserveDate},
+            </if>
+            <if test="arriveDate != null">
+                arriveDate = #{arriveDate},
+            </if>
+            <if test="leaveDate != null">
+                leaveDate = #{leaveDate},
+            </if>
+            <if test="reservePrice != null">
+                reservePrice = #{reservePrice},
+            </if>
+            <if test="remark != null">
+                remark = #{remark},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+</mapper>

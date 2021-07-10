@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tang.dao.MenuMapper">
+
+    <select id="findMenuList" resultType="Menu">
+        select * from ssm_hotel.sys_menu;
+    </select>
+
+    <select id="findMenuIdListByRoleId" resultType="int">
+        select mid from ssm_hotel.sys_role_menu where rid = #{roleId}
+    </select>
+
+    <select id="findMenuByMenuId" resultType="Menu">
+        select * from ssm_hotel.sys_menu where id in
+        <foreach collection="list" item="roleMenuIds" open="(" separator="," close=")">
+            #{roleMenuIds}
+        </foreach>
+    </select>
+
+    <!-- pid = id，说明查表，包括子表也要查出来 -->
+    <select id="findMenuListByPage" resultType="Menu">
+        select * from sys_menu
+        <where>
+            <if test="id!=null">
+                and id = #{id} or pid = #{id}
+            </if>
+        </where>
+        order by id
+    </select>
+
+    <insert id="addMenu" parameterType="Menu">
+        insert into sys_menu (pid,title,href,spread,target,icon)
+        values (#{pid},#{title},#{href},#{spread},#{target},#{icon})
+    </insert>
+
+    <update id="updateMenu" parameterType="Menu">
+        update sys_menu
+        <set>
+            <if test="pid!=null">
+                pid = #{pid},
+            </if>
+            <if test="title!=null and title!=''">
+                title = #{title},
+            </if>
+            <if test="href!=null and href!=''">
+                href = #{href},
+            </if>
+            <if test="spread!=null">
+                spread = #{spread},
+            </if>
+            <if test="target!=null and target!=''">
+                target = #{target},
+            </if>
+            <if test="icon!=null and icon!=''">
+                icon = #{icon},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteById" parameterType="int">
+        delete from sys_menu where id = #{id}
+    </delete>
+
+    <select id="getMenuCountByMenuId" resultType="int">
+        select count(1) from sys_menu where pid = #{id}
+    </select>
+
+    <select id="findMenuListByEmployeeId" resultType="Menu">
+        select distinct t1.* from sys_menu t1
+        inner join sys_role_menu t2 on t1.`id` = t2.`mid`
+        inner join sys_role_employee t3 on t2.`rid` = t3.`rid`
+        where t3.`eid` = #{eid}
+    </select>
+</mapper>

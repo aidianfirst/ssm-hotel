@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tang.dao.CheckOutMapper">
+
+    <insert id="addCheckOut">
+        insert into t_checkout (checkOutNumber,checkInId,consumerPrice,createDate,createdBy,remark)
+        values (#{checkOutNumber},#{checkInId},#{consumerPrice},#{createDate},#{createdBy},#{remark})
+    </insert>
+
+</mapper>

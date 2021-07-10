@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tang.dao.CheckInMapper">
+    <resultMap id="BaseResultMap" type="CheckIn">
+        <id column="id" property="id" />
+        <result column="roomTypeId" property="roomTypeId" />
+        <result column="roomId" property="roomId" />
+        <result column="customerName" property="customerName" />
+        <result column="idCard" property="idCard" />
+        <result column="phone" property="phone" />
+        <result column="arriveDate" property="arriveDate" />
+        <result column="leaveDate" property="leaveDate" />
+        <result column="payPrice" property="payPrice" />
+        <result column="status" property="status" />
+        <result column="remark" property="remark" />
+    </resultMap>
+
+    <resultMap id="checkInRoomAndTypeResultMap" type="CheckIn" extends="BaseResultMap">
+        <!-- 配置订单与房间关系 -->
+        <association property="room" javaType="Room">
+            <id column="id" property="id"/>
+            <result property="roomNum" column="roomNum"/>
+        </association>
+        <!-- 配置订单与房型关系 -->
+        <association property="roomType" javaType="RoomType">
+            <id property="id" column="id"/>
+            <result property="typeName" column="typeName"/>
+        </association>
+    </resultMap>
+
+    <select id="findCheckInList" resultMap="checkInRoomAndTypeResultMap">
+        select t1.*,t2.roomNum,t3.typeName from t_checkin t1
+        inner join t_room t2 on t1.roomId = t2.id
+        inner join t_room_type t3 on t2.roomTypeId = t3.id
+        <where>
+            <if test="customerName!=null and customerName!=''">
+                and t1.customerName like concat('%',#{customerName},'%')
+            </if>
+            <if test="idCard!=null and idCard!=''">
+                and t1.idCard like concat('%',#{idCard},'%')
+            </if>
+            <if test="phone!=null and phone!=''">
+                and t1.phone like concat('%',#{phone},'%')
+            </if>
+            <if test="roomTypeId!=null">
+                and t1.roomTypeId = #{roomTypeId}
+            </if>
+            <if test="status!=null">
+                and t1.status = #{status}
+            </if>
+            <if test="arriveDate!=null">
+                <![CDATA[and t1.arriveDate >= #{arriveDate}]]>
+            </if>
+            <if test="leaveDate!=null">
+                <![CDATA[and t1.leaveDate <= #{leaveDate}]]>
+            </if>
+        </where>
+    </select>
+
+    <insert id="addCheckIn">
+        insert into t_checkin (roomTypeId,roomId,customerName,idCard,phone,arriveDate,leaveDate,payPrice,ordersId,status,remark)
+        values (#{roomTypeId},#{roomId},#{customerName},#{idCard},#{phone},#{arriveDate},#{leaveDate},#{payPrice},#{ordersId},#{status},#{remark})
+    </insert>
+
+    <update id="updateCheckIn">
+        update t_checkin
+        <set>
+            <if test="roomTypeId != null">
+                roomTypeId = #{roomTypeId},
+            </if>
+            <if test="roomId != null">
+                roomId = #{roomId},
+            </if>
+            <if test="customerName != null">
+                customerName = #{customerName},
+            </if>
+            <if test="idCard != null">
+                idCard = #{idCard},
+            </if>
+            <if test="phone != null">
+                phone = #{phone},
+            </if>
+            <if test="arriveDate != null">
+                arriveDate = #{arriveDate},
+            </if>
+            <if test="leaveDate != null">
+                leaveDate = #{leaveDate},
+            </if>
+            <if test="payPrice != null">
+                payPrice = #{payPrice},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="remark != null">
+                remark = #{remark},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+</mapper>
